@@ -69,6 +69,30 @@ const createDoctorProfile = async (req, res) => {
     }
 };
 
+
+const getAllDoctors = async (req, res) => {
+    try {
+
+        const doctors = await Doctor.find().populate(
+            "user",
+            "name email role"
+        );
+
+        return res.status(200).json({
+            success: true,
+            count: doctors.length,
+            doctors,
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
 module.exports = {
-    createDoctorProfile
+    createDoctorProfile , getAllDoctors
 };
