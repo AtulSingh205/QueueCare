@@ -93,6 +93,39 @@ const getAllDoctors = async (req, res) => {
         });
     }
 };
+
+const getDoctorById = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const doctor = await Doctor.findById(id).populate(
+            "user",
+            "name email role"
+        );
+
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                message: "Doctor not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            doctor
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+};
+
 module.exports = {
-    createDoctorProfile , getAllDoctors
+    createDoctorProfile , getAllDoctors ,getDoctorById
 };

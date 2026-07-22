@@ -68,6 +68,100 @@ const bookAppointment = async (req, res) => {
     }
 };
 
+
+const getMyAppointments = async (req, res) => {
+    try {
+
+        // Find logged-in patient
+        const patient = await Patient.findOne({
+            user: req.user.user
+        });
+
+        if (!patient) {
+            return res.status(404).json({
+                success: false,
+                message: "Patient profile not found"
+            });
+        }
+
+        // Get all appointments
+        const appointments = await Appointment.find({
+            patient: patient._id
+        })
+            .populate("doctor")
+            .sort({ appointmentDate: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: appointments.length,
+            appointments
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+};
+
+const cancelAppointment = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        // Find logged-in patient
+        const patient = await Patient.findOne({
+            user: req.user.user
+        });
+
+        if (!patient) {
+            return res.status(404).json({
+                success: false,
+                message: "Patient profile not found"
+            });
+        }
+
+        // Find appointment
+        const appointment = await Appointment.findById(id);
+
+        if (!appointment) {
+            return res.status(404).json({
+                success: false,
+                message: "Appointment not found"
+            });
+        }
+
+        // Check ownership
+        if (appointment.patient.toString() !== patient._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not allowed to cancel this appointment"
+            });
+        }
+
+        // Delete appointment
+        await Appointment.findByIdAndDelete(id);
+
+        return res.status(200).json({
+            success: true,
+            message: "Appointment cancelled successfully"
+        });
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+};
+
 module.exports = {
-    bookAppointment
+    bookAppointment,
+    getMyAppointments,
+    cancelAppointment
 };
