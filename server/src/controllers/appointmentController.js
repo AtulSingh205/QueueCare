@@ -1,6 +1,8 @@
 const Appointment = require("../models/Appointment");
 const Patient = require("../models/Patient");
 const Doctor = require("../models/Doctor");
+const Queue = require("../models/Queue");
+
 
 const bookAppointment = async (req, res) => {
     try {
@@ -37,7 +39,7 @@ const bookAppointment = async (req, res) => {
             appointmentDate,
         }).sort({ tokenNumber: -1 });
 
-        
+
         const tokenNumber = lastAppointment
             ? lastAppointment.tokenNumber + 1
             : 1;
@@ -51,6 +53,15 @@ const bookAppointment = async (req, res) => {
             reason,
             tokenNumber,
         })
+        // Update Queue
+        const queue = await Queue.findOne({
+            doctor: doctor._id,
+        });
+
+        if (queue) {
+            queue.totalTokens += 1;
+            await queue.save();
+        }
 
         return res.status(201).json({
             success: true,
