@@ -1,4 +1,5 @@
 const Doctor = require("../models/Doctor");
+const Queue = require("../models/Queue");
 
 const createDoctorProfile = async (req, res) => {
     try {
@@ -51,6 +52,21 @@ const createDoctorProfile = async (req, res) => {
             hospital,
             availableDays,
             availableTime
+        });
+
+        const doctor = await Doctor.create({
+            user: req.user.user,
+            specialization,
+            qualification,
+            experience,
+            consultationFee,
+            hospital,
+            availableDays,
+            availableTime
+        });
+
+        await Queue.create({
+            doctor: doctor._id,
         });
 
         return res.status(201).json({
@@ -127,5 +143,5 @@ const getDoctorById = async (req, res) => {
 };
 
 module.exports = {
-    createDoctorProfile , getAllDoctors ,getDoctorById
+    createDoctorProfile, getAllDoctors, getDoctorById
 };

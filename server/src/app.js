@@ -5,6 +5,7 @@ const authRoutes = require("./routes/authRoutes");
 const appointementRoutes = require("./routes/appointmentRoute")
 const doctorRoutes = require("./routes/doctorRoutes");
 const patientRoutes = require("./routes/patientRoutes")
+const queueRoutes = require("./routes/queueRoutes")
 const app = express();
 
 app.use(cors());
@@ -15,6 +16,7 @@ app.use("/api/auth",authRoutes)
 app.use("/api/appointments",appointementRoutes)
 app.use("/api/doctors", doctorRoutes);
 app.use("/app/patients",patientRoutes);
+app.use("/api/queue",queueRoutes)
 
 
 app.get('/',(req,res)=>{
