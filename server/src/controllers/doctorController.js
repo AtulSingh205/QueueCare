@@ -54,20 +54,13 @@ const createDoctorProfile = async (req, res) => {
             availableTime
         });
 
-        const doctor = await Doctor.create({
-            user: req.user.user,
-            specialization,
-            qualification,
-            experience,
-            consultationFee,
-            hospital,
-            availableDays,
-            availableTime
-        });
+       console.log("Doctor Created",doctor)
 
         await Queue.create({
             doctor: doctor._id,
         });
+
+        console.log("Queue Created")
 
         return res.status(201).json({
             success: true,
@@ -133,7 +126,7 @@ const getDoctorById = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
 
         return res.status(500).json({
             success: false,

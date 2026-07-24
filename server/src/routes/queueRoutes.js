@@ -3,7 +3,8 @@ const router = express.Router();
 
 const {
     getCurrentQueue,
-    nextToken
+    nextToken,
+    getQueue
 } = require("../controllers/queueController");
 
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -23,5 +24,7 @@ router.put(
     roleMiddleware("doctor"),
     nextToken
 );
+
+router.get("/:doctorId",getQueue);
 
 module.exports = router;
